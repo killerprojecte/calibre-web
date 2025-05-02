@@ -954,9 +954,10 @@ def render_edit_book(book_id):
     # Determine what formats don't already exist
     if config.config_converterpath:
         allowed_conversion_formats = constants.EXTENSIONS_CONVERT_TO[:]
-        for file in book.data:
-            if file.format.lower() in allowed_conversion_formats:
-                allowed_conversion_formats.remove(file.format.lower())
+        # # Removed format exclude (epub3 - epub2)
+        # for file in book.data:
+        #     if file.format.lower() in allowed_conversion_formats:
+        #         allowed_conversion_formats.remove(file.format.lower())
     if kepub_possible:
         allowed_conversion_formats.append('kepub')
     return render_title_template('book_edit.html', book=book, authors=author_names, cc=cc,
