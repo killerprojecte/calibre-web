@@ -84,8 +84,8 @@ class _Settings(_Base):
     config_authors_max = Column(Integer, default=0)
     config_read_column = Column(Integer, default=0)
     config_title_regex = Column(String,
-                                default=r'^(A|The|An|Der|Die|Das|Den|Ein|Eine'
-                                        r'|Einen|Dem|Des|Einem|Eines|Le|La|Les|L\'|Un|Une)\s+')
+                                default=r"^(A|The|An|Der|Die|Das|Den|Ein|Eine"
+                                        r"|Einen|Dem|Des|Einem|Eines|Le|La|Les|L'|Un|Une)(\s+|(?<='))")
     config_theme = Column(Integer, default=0)
 
     config_log_level = Column(SmallInteger, default=logger.DEFAULT_LOG_LEVEL)
@@ -117,6 +117,7 @@ class _Settings(_Base):
 
     config_use_goodreads = Column(Boolean, default=False)
     config_goodreads_api_key = Column(String)
+    config_googlebooks_api_key = Column(String, default='')
     config_register_email = Column(Boolean, default=False)
     config_login_type = Column(Integer, default=0)
 
@@ -325,7 +326,7 @@ class ConfigSQL(object):
     def to_dict(self):
         storage = {}
         for k, v in self.__dict__.items():
-            if k[0] != '_' and not k.endswith("_e") and not k == "cli":
+            if k[0] != '_' and not k.endswith("_e") and not k == "cli" and 'api' not in k.lower():
                 storage[k] = v
         return storage
 
@@ -402,7 +403,7 @@ class ConfigSQL(object):
         self.save()
 
     def get_book_path(self):
-        return self.config_calibre_split_dir if self.config_calibre_split_dir else self.config_calibre_dir
+        return self.config_calibre_split_dir if self.config_calibre_split else self.config_calibre_dir
 
     def store_calibre_uuid(self, calibre_db, Library_table):
         from . import app
