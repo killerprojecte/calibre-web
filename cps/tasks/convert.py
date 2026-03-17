@@ -181,6 +181,9 @@ class TaskConvert(CalibreTask):
 
             if check == 0:
                 cur_book = local_db.get_book(book_id)
+                if format_old_ext == format_new_ext:
+                    os.remove(file_path + format_old_ext)
+                    os.rename(file_path + "-new" + format_new_ext, file_path + format_new_ext)
                 if os.path.isfile(file_path + format_new_ext):
                     new_format = local_db.session.query(db.Data).filter(db.Data.book == book_id) \
                         .filter(db.Data.format == self.settings['new_book_format'].upper()).one_or_none()
@@ -292,8 +295,11 @@ class TaskConvert(CalibreTask):
                     return check, error_message
             quotes = [1, 2]
             quotes_index = 3
+            new_file_path = file_path
+            if format_old_ext == format_new_ext:
+                new_file_path = new_file_path + "-new"
             command = [config.config_converterpath, (file_path + format_old_ext),
-                       (file_path + format_new_ext)]
+                       (new_file_path + format_new_ext)]
             if config.config_embed_metadata:
                 quotes.append(4)
                 quotes_index = 5
